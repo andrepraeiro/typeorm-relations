@@ -37,7 +37,7 @@ class CreateOrderService {
 
     const findProducts = await this.productsRepository.findAllById(products);
 
-    if (!findProducts) {
+    if (!findProducts || findProducts.length === 0) {
       throw new AppError('Products not found', 400);
     }
 
@@ -47,8 +47,26 @@ class CreateOrderService {
         product_id: t.id,
         price: t.price,
         quantity: products[index].quantity,
+        availableQuantity: t.quantity,
       };
     });
+
+    const productWithoutAvailableQuantity = prod.some(
+      product => product.quantity > product.availableQuantity,
+    );
+
+    if (productWithoutAvailableQuantity) {
+      throw new AppError('There are products without available quantity', 400);
+    }
+
+    const updateQuantity = prod.map(item => {
+      return {
+        id: item.product_id,
+        quantity: item.quantity,
+      };
+    });
+
+    await this.productsRepository.updateQuantity(updateQuantity);
 
     const order = await this.ordersRepository.create({
       customer,

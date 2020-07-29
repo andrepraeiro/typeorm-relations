@@ -24,8 +24,10 @@ class OrdersProducts {
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
+  @Column()
   product_id: string;
 
+  @Column()
   order_id: string;
 
   @Column()
