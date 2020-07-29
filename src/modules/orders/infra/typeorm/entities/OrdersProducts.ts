@@ -6,7 +6,6 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn,
   ManyToOne,
-  ManyToMany,
 } from 'typeorm';
 
 import Order from '@modules/orders/infra/typeorm/entities/Order';
@@ -17,7 +16,7 @@ class OrdersProducts {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Order)
+  @ManyToOne(() => Order, order => order.order_products)
   @JoinColumn({ name: 'order_id' })
   order: Order;
 
@@ -42,9 +41,6 @@ class OrdersProducts {
 
   @UpdateDateColumn()
   updated_at: Date;
-
-  @ManyToMany(() => Order, order => order.order_products)
-  orders: Order[];
 }
 
 export default OrdersProducts;

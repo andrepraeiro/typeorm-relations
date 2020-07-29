@@ -6,14 +6,11 @@ import {
   ManyToOne,
   JoinColumn,
   Column,
-  ManyToMany,
-  JoinTable,
   OneToMany,
 } from 'typeorm';
 
 import Customer from '@modules/customers/infra/typeorm/entities/Customer';
 import OrdersProducts from '@modules/orders/infra/typeorm/entities/OrdersProducts';
-import { JoinAttribute } from 'typeorm/query-builder/JoinAttribute';
 
 @Entity('orders')
 class Order {
@@ -27,7 +24,9 @@ class Order {
   @Column()
   customerId: string;
 
-  @OneToMany(() => OrdersProducts)
+  @OneToMany(() => OrdersProducts, orderProducts => orderProducts.order, {
+    cascade: true,
+  })
   order_products: OrdersProducts[];
 
   @CreateDateColumn()
