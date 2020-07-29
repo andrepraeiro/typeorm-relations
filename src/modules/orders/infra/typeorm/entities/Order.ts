@@ -5,22 +5,29 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
   OneToMany,
 } from 'typeorm';
 
 import Customer from '@modules/customers/infra/typeorm/entities/Customer';
 import OrdersProducts from '@modules/orders/infra/typeorm/entities/OrdersProducts';
+import { JoinAttribute } from 'typeorm/query-builder/JoinAttribute';
 
 @Entity('orders')
 class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Customer)
-  @JoinColumn()
+  @ManyToOne(() => Customer, { eager: true })
+  @JoinColumn({ name: 'customerId' })
   customer: Customer;
 
-  @OneToMany(() => OrdersProducts, products => products.order)
+  @Column()
+  customerId: string;
+
+  @OneToMany(() => OrdersProducts)
   order_products: OrdersProducts[];
 
   @CreateDateColumn()
